@@ -1,5 +1,6 @@
-# bird-bgp-unnumbered-helper
-Helper tool to assist in generating BGP unnumbered configurations for BIRD
+# ndpp
+
+A CLI tool for automating tasks based on Neighbor Discovery Protocol events
 
 ## Usage
 

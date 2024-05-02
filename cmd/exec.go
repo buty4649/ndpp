@@ -19,12 +19,54 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package main
+package cmd
 
 import (
-	"ndpp/cmd"
+	"bytes"
+	"ndpp/ndp"
+	"os/exec"
+	"strings"
 )
 
-func main() {
-	cmd.Execute()
+func commandExec(r []*ndp.Result, c string) error {
+	var sb strings.Builder
+	for _, v := range r {
+		sb.WriteString("router_addr=")
+		sb.WriteString(removeZoneIndex(v.Router.Addr.String()))
+		sb.WriteString(" ")
+
+		sb.WriteString("lladdr=")
+		sb.WriteString(removeZoneIndex(v.Router.LLAddr))
+		sb.WriteString(" ")
+
+		sb.WriteString("local_addr=")
+		sb.WriteString(removeZoneIndex(v.Local.Addr.String()))
+		sb.WriteString(" ")
+
+		sb.WriteString("interface=")
+		sb.WriteString(v.IfName)
+		sb.WriteString("\n")
+	}
+
+	cmd := exec.Command(c)
+
+	var o, e bytes.Buffer
+	cmd.Stdout = &o
+	cmd.Stderr = &e
+
+	i, err := cmd.StdinPipe()
+	if err != nil {
+		return err
+	}
+	go func() {
+		defer i.Close()
+		i.Write([]byte(sb.String()))
+	}()
+
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
