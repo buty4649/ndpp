@@ -133,7 +133,4 @@ func init() {
 	rootCmd.Flags().StringVarP(&opts.template, "template", "T", "yaml", "template possible values: yaml, json, bird, shellvar. default: yaml")
 	rootCmd.Flags().StringVarP(&opts.output, "output", "o", "", "output file path. if not specified, it will be printed to stdout")
 	rootCmd.Flags().StringVarP(&opts.command, "command", "c", "", "command to run when the router advertisement is received")
-
-	rootCmd.MarkFlagsMutuallyExclusive("template", "command")
-	rootCmd.MarkFlagsMutuallyExclusive("output", "command")
 }
