@@ -100,6 +100,8 @@ func formatResult(r []*ndp.Result, t string) (string, error) {
 		output, err = results.jsonDecode()
 	} else if t == "bird" {
 		output, err = results.birdConfigDecode()
+	} else if t == "shellvar" {
+		output, err = results.shellVarDecode()
 	}
 
 	return output, err
@@ -166,4 +168,35 @@ define {{.Local.Interface | replaceDot}}_lladdr = hex:{{.Local.LinkLayerAddr}};
 	}
 
 	return buf.String(), nil
+}
+
+func (r formattedResults) shellVarDecode() (string, error) {
+	var sb strings.Builder
+	for _, v := range r {
+		sb.WriteString("router_addr=")
+		sb.WriteString(removeZoneIndex(v.Router.Addr))
+		sb.WriteString(" ")
+
+		sb.WriteString("router_addr_with_zone=")
+		sb.WriteString(v.Router.AddrWithZone)
+		sb.WriteString(" ")
+
+		sb.WriteString("router_lladdr=")
+		sb.WriteString(v.Router.LinkLayerAddr)
+		sb.WriteString(" ")
+
+		sb.WriteString("local_addr=")
+		sb.WriteString(v.Local.Addr)
+		sb.WriteString(" ")
+
+		sb.WriteString("local_interface=")
+		sb.WriteString(v.Local.Interface)
+		sb.WriteString(" ")
+
+		sb.WriteString("local_lladdr=")
+		sb.WriteString(v.Local.LinkLayerAddr)
+		sb.WriteString("\n")
+	}
+
+	return sb.String(), nil
 }

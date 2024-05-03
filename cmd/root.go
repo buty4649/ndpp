@@ -114,7 +114,7 @@ func validateOptions(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("timeout must be greater than or equal to 0")
 	}
 
-	if !slices.Contains([]string{"yaml", "json", "bird"}, opts.template) {
+	if !slices.Contains([]string{"yaml", "json", "bird", "shellvar"}, opts.template) {
 		return fmt.Errorf("template must be one of yaml, json, bird")
 	}
 
@@ -130,7 +130,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().IntVarP(&opts.timeout, "timeout", "t", 5, "timeout in seconds. if 0, it will wait indefinitely.")
-	rootCmd.Flags().StringVarP(&opts.template, "template", "T", "yaml", "template possible values: yaml, json, bird. default: yaml")
+	rootCmd.Flags().StringVarP(&opts.template, "template", "T", "yaml", "template possible values: yaml, json, bird, shellvar. default: yaml")
 	rootCmd.Flags().StringVarP(&opts.output, "output", "o", "", "output file path. if not specified, it will be printed to stdout")
 	rootCmd.Flags().StringVarP(&opts.command, "command", "c", "", "command to run when the router advertisement is received")
 

@@ -23,31 +23,12 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"ndpp/ndp"
 	"os/exec"
-	"strings"
 )
 
 func commandExec(r []*ndp.Result, c string) error {
-	var sb strings.Builder
-	for _, v := range r {
-		sb.WriteString("router_addr=")
-		sb.WriteString(removeZoneIndex(v.Router.Addr.String()))
-		sb.WriteString(" ")
-
-		sb.WriteString("lladdr=")
-		sb.WriteString(removeZoneIndex(v.Router.LLAddr))
-		sb.WriteString(" ")
-
-		sb.WriteString("local_addr=")
-		sb.WriteString(removeZoneIndex(v.Local.Addr.String()))
-		sb.WriteString(" ")
-
-		sb.WriteString("interface=")
-		sb.WriteString(v.IfName)
-		sb.WriteString("\n")
-	}
-
 	cmd := exec.Command(c)
 
 	var o, e bytes.Buffer
@@ -60,12 +41,14 @@ func commandExec(r []*ndp.Result, c string) error {
 	}
 	go func() {
 		defer i.Close()
-		i.Write([]byte(sb.String()))
+
+		vars, _ := formatResult(r, "shellvar")
+		i.Write([]byte(vars))
 	}()
 
 	err = cmd.Run()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute command: %s, stdout: %s, stderr: %s", err, o.String(), e.String())
 	}
 
 	return nil
