@@ -24,6 +24,9 @@ builds:
       - amd64
       - arm64
       - mipsle
+    ldflags:
+      - -s -w -X ndpp/version.Version={{.Version}} -X ndpp/version.Commit={{.Commit}} -X ndpp/version.Date={{.Date}}
+
 
 archives:
   - format: tar.gz
