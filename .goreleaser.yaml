@@ -38,19 +38,14 @@ archives:
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
 nfpms:
-  - homepage: https://github.com/buty4649/netnsplan/
+  - homepage: https://github.com/buty4649/ndpp/
     maintainer: buty4649 <buty4649@gmail.com>
-    description: Easily automate Linux netns networks and configurations via YAML
+    description: A CLI tool for automating tasks based on Neighbor Discovery Protocol events
     formats:
       - deb
       - rpm
     bindir: /usr/sbin
     section: net
-    contents:
-      - src: example/netnsplan.yaml
-        dst: /etc/netnsplan/netnsplan.yaml.example
-        type: config
-
 
 changelog:
   sort: asc

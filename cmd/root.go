@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"ndpp/ndp"
+	"ndpp/version"
 
 	"github.com/spf13/cobra"
 )
@@ -122,6 +123,12 @@ func validateOptions(cmd *cobra.Command, args []string) error {
 }
 
 func Execute() {
+	if version.Version != "dev" {
+		rootCmd.Version = fmt.Sprintf("v%s", version.Version)
+	} else {
+		rootCmd.Version = version.Version
+	}
+
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
