@@ -19,12 +19,37 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package main
+package cmd
 
 import (
-	"ndpp/cmd"
+	"bytes"
+	"fmt"
+	"ndpp/ndp"
+	"os/exec"
 )
 
-func main() {
-	cmd.Execute()
+func commandExec(r []*ndp.Result, c string) error {
+	cmd := exec.Command(c)
+
+	var o, e bytes.Buffer
+	cmd.Stdout = &o
+	cmd.Stderr = &e
+
+	i, err := cmd.StdinPipe()
+	if err != nil {
+		return err
+	}
+	go func() {
+		defer i.Close()
+
+		vars, _ := formatResult(r, "shellvar")
+		i.Write([]byte(vars))
+	}()
+
+	err = cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to execute command: %s, stdout: %s, stderr: %s", err, o.String(), e.String())
+	}
+
+	return nil
 }
