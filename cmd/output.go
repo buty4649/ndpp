@@ -132,26 +132,30 @@ func (r formattedResults) birdConfigDecode() (string, error) {
 define {{.Local.Interface | replaceDot}}_neighbor_address = {{.Router.Addr}};
 define {{.Local.Interface | replaceDot}}_local_address = {{.Local.Addr}};
 define {{.Local.Interface | replaceDot}}_lladdr = hex:{{.Local.LinkLayerAddr}};
-
-#
-# The following is a sample configuration. If you wish to use it, please uncomment the settings below and paste them into bird.conf.
+{{ end }}
+#####################################################################
+# The following is a sample configuration. If you wish to use it,
+# please uncomment the settings below and paste them into bird.conf.
+#####################################################################
 #
 #define remote_asn = <Please set remote ASN>;
 #define my_asn = <Please set local ASN>;
 #
 #protocol radv {
+{{- range . }}
 #  interface "{{.Local.Interface}}" {
-#    custom option type 1 value uplink_lladdr;
+#    custom option type 1 value {{.Local.Interface | replaceDot}}_lladdr;
 #  };
+{{- end }}
 #}
-#protocol bgp uplink {
+{{ range . -}}
+#protocol bgp {{.Local.Interface | replaceDot}} {
 #  neighbor {{.Local.Interface | replaceDot}}_neighbor_address as remote_asn;
 #  interface "{{.Local.Interface}}";
 #  local as my_asn;
 #  ipv4 { extended next hop; import all; export all; };
 #  ipv6 { import all; export all; };
 #}
-
 {{ end }}`
 
 	t, err := template.New("bird").Funcs(template.FuncMap{
