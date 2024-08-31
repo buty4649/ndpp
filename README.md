@@ -39,7 +39,7 @@ define eth0_lladdr = hex:yy:yy:yy:yy:yy:yy;
 #  };
 #}
 #protocol bgp eth0 {
-#  neighbor eth0_neighbor_address}} as remote_asn;
+#  neighbor eth0_neighbor_address as remote_asn;
 #  interface "eth0";
 #  local as local_asn;
 #  ipv4 { extended next hop; import all; export all; };
